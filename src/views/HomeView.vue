@@ -12,8 +12,9 @@
 <script>
 export default {
   data: function () {
+    const s = 45;
     return {
-      series: [78],
+      series: [s],
       options: {
         chart: {
           type: "radialBar",

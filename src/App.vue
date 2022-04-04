@@ -2,10 +2,10 @@
   <div id="app" class="bg-light">
     <nav class="nav navbar navbar-expand-lg navbar-light bg-dark bg-gradient">
       <div class="container-fluid">
-        <a class="navbar-brand text-white me-auto" href="#"
+        <router-link to="/" class="navbar-brand text-white me-auto" href="#"
           ><img src="@/assets/magic.png" width="30" height="50" class="mx-2" />
           <a>Mtg Pula</a>
-        </a>
+        </router-link>
 
         <button
           class="navbar-toggler bg-white"
@@ -20,17 +20,19 @@
         </button>
         <div class="collapse navbar-collapse ms-auto" id="navbarTogglerDemo02">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <router-link to="/" class="nav-link text-white">Home</router-link>
-            </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="!store.currentUser">
               <router-link to="/login" class="nav-link text-white"
                 >Login</router-link
               >
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="!store.currentUser">
               <router-link to="/signup" class="nav-link text-white"
                 >Signup</router-link
+              >
+            </li>
+            <li class="nav-item" v-if="store.currentUser">
+              <a class="nav-link text-white" href="#" @click="signout()"
+                >Signout</a
               >
             </li>
           </ul>
@@ -39,12 +41,54 @@
     </nav>
 
     <router-view />
-    <div id="footer" class="text-center mt-5">
+    <div id="footer" class="text-center mt-auto">
       Ovo je footer. (c) 2019 mi svi skupa.
     </div>
   </div>
 </template>
 
+<script>
+import { auth } from "@/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import store from "@/store";
+import router from "@/router";
+
+onAuthStateChanged(auth, (user) => {
+  const currentRoute = router.currentRoute;
+  if (user) {
+    console.log("*** User", store.currentUser);
+    store.currentUser = user.email;
+    if (!currentRoute.meta.needsUser) {
+      router.push({ name: "home" });
+    }
+  } else {
+    console.log("*** User", store.currentUser);
+    store.currentUser = null;
+    if (currentRoute.meta.needsUser) {
+      router.push({ name: "login" });
+    }
+  }
+});
+
+export default {
+  data() {
+    return {
+      store,
+    };
+  },
+  methods: {
+    signout() {
+      signOut(auth)
+        .then(() => {
+          store.currentUser = null;
+        })
+        .catch((e) => {
+          console.error("Greška", e);
+        });
+    },
+  },
+};
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
