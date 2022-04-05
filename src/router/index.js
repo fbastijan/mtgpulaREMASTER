@@ -15,6 +15,15 @@ const routes = [
     },
   },
   {
+    path: "/turnir",
+    name: "turnir",
+    component: () =>
+      import(/* webpackChunkName: "turnir" */ "../views/TurnirView.vue"),
+    meta: {
+      needsUser: true,
+    },
+  },
+  {
     path: "/login",
     name: "login",
     component: () =>
@@ -24,7 +33,7 @@ const routes = [
     path: "/signup",
     name: "signup",
     component: () =>
-      import(/* webpackChunkName: "login" */ "../views/SignupViewUser.vue"),
+      import(/* webpackChunkName: "signup" */ "../views/SignupViewUser.vue"),
   },
 ];
 

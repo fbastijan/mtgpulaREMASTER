@@ -30,6 +30,12 @@
                 >Signup</router-link
               >
             </li>
+
+            <li class="nav-item" v-if="store.currentUser">
+              <router-link to="/turnir" class="nav-link text-white"
+                >Turnir</router-link
+              >
+            </li>
             <li class="nav-item" v-if="store.currentUser">
               <a class="nav-link text-white" href="#" @click="signout()"
                 >Signout</a
@@ -100,6 +106,7 @@ export default {
 
 body {
   background-color: #f8f9fa;
+  border-color: #f8f9fa;
 }
 nav {
   padding: 30px;
