@@ -106,7 +106,6 @@ export default {
 
 body {
   background-color: #f8f9fa;
-  border-color: #f8f9fa;
 }
 nav {
   padding: 30px;
