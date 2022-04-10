@@ -47,9 +47,6 @@
     </nav>
 
     <router-view />
-    <div id="footer" class="text-center mt-auto">
-      Ovo je footer. (c) 2019 mi svi skupa.
-    </div>
   </div>
 </template>
 
