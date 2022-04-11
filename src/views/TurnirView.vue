@@ -1,7 +1,7 @@
 <template>
   <div class="row mt-5">
     <div class="col"></div>
-    <div class="col-4">
+    <div class="col-6">
       <h1>Generator turnira</h1>
       <div v-if="igraci.zapoceoTurnir === false">
         <label for="brojRundi" class="form-label">Upiši broj rundi</label>
@@ -38,7 +38,7 @@
           Započni turnir
         </button>
       </div>
-      <matchupComp />
+      <matchupComp v-if="igraci.zapoceoTurnir === true" />
     </div>
     <div class="col"></div>
     <!-- Modal -->
@@ -100,7 +100,6 @@ export default {
       igraci,
       Odabrani: [],
       matchup,
-      runda: [],
     };
   },
 
@@ -110,14 +109,26 @@ export default {
     matchupComp,
   },
   methods: {
+    compare(a, b) {
+      if (a.player1 < b.player1) {
+        return -1;
+      }
+      if (a.player1 > b.player1) {
+        return 1;
+      }
+      return 0;
+    },
     spariIgrace() {
+      let runda = [];
       for (var i = 0; i < igraci.listaIgraca.length; i += 2) {
-        this.runda.push({
+        runda.push({
+          id: i,
           player1: igraci.listaIgraca[i].id,
           player2: igraci.listaIgraca[i + 1].id,
+          rez: undefined,
         });
-        matchup.listaMatchupa.push(this.runda);
       }
+      matchup.listaMatchupa.push(runda);
     },
     turnirStart() {
       if (matchup.brojRundi === null) {
@@ -141,9 +152,15 @@ export default {
           console.log("matchup:", el.player1, " ", el.player2);
         });
         console.log("broj rundi:", matchup.brojRundi);
-
+        this.spariIgrace();
         this.igraci.zapoceoTurnir = true;
-        console.log("sada si u rundi:", matchup.tekucaRunda);
+        matchup.listaMatchupa[1].sort(this.compare);
+        console.log(
+          "sada si u rundi:",
+          matchup.tekucaRunda,
+          "   ",
+          matchup.listaMatchupa[1][0].player1
+        );
       }
     },
 
