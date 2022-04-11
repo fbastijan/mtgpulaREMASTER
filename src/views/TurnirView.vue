@@ -10,6 +10,7 @@
           id="brojRundi"
           class="form-control"
           aria-describedby="passwordHelpBlock"
+          v-model="matchup.brojRundi"
         />
         <button
           type="button"
@@ -37,6 +38,7 @@
           Započni turnir
         </button>
       </div>
+      <matchupComp />
     </div>
     <div class="col"></div>
     <!-- Modal -->
@@ -82,6 +84,7 @@ import { onSnapshot, collection } from "firebase/firestore";
 import { db } from "@/firebase.js";
 import igraci from "@/igraci";
 import matchup from "@/matchupi";
+import matchupComp from "@/components/matchup.vue";
 
 /*let playeri = [
   { DCI: "1234122", usern,ame: "Markić" },
@@ -91,11 +94,12 @@ import matchup from "@/matchupi";
 export default {
   data() {
     return {
+      options: ["2-0", "2-1", "1-1", "1-2", "0-2"],
+      value: "2-0",
       playeri: [],
       igraci,
       Odabrani: [],
       matchup,
-
       runda: [],
     };
   },
@@ -103,6 +107,7 @@ export default {
   components: {
     Playeriturnir,
     odabraniIgraci,
+    matchupComp,
   },
   methods: {
     spariIgrace() {
@@ -115,25 +120,31 @@ export default {
       }
     },
     turnirStart() {
-      if (igraci.listaIgraca.length % 2 !== 0) {
-        igraci.listaIgraca.push({
-          id: 0,
-          username: "bye",
-          DCI: "",
-          omw: 0,
-          odigrano: [],
-          gwp: 0,
-          ogw: 0,
-          points: 0,
+      if (matchup.brojRundi === null) {
+        alert("Prvo izaberi broj rundi pa možeš pokrenuti turnir");
+      } else {
+        if (igraci.listaIgraca.length % 2 !== 0) {
+          igraci.listaIgraca.push({
+            id: 0,
+            username: "bye",
+            DCI: "",
+            omw: 0,
+            odigrano: [],
+            gwp: 0,
+            ogw: 0,
+            points: 0,
+          });
+        }
+
+        this.spariIgrace();
+        matchup.listaMatchupa[0].forEach((el) => {
+          console.log("matchup:", el.player1, " ", el.player2);
         });
+        console.log("broj rundi:", matchup.brojRundi);
+
+        this.igraci.zapoceoTurnir = true;
+        console.log("sada si u rundi:", matchup.tekucaRunda);
       }
-
-      this.spariIgrace();
-      matchup.listaMatchupa[0].forEach((el) => {
-        console.log("matchup:", el.player1, " ", el.player2);
-      });
-
-      this.igraci.zapoceoTurnir = true;
     },
 
     getPlayers() {
