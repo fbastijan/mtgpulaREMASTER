@@ -1,26 +1,44 @@
 <template>
-  <div class="row mt-5">
+  <div class="row">
     <div class="col"></div>
     <div class="col-6">
       <h1>Generator turnira</h1>
-      <div v-if="igraci.zapoceoTurnir === false">
-        <label for="brojRundi" class="form-label">Upiši broj rundi</label>
-        <input
-          type="number"
-          id="brojRundi"
-          class="form-control"
-          aria-describedby="passwordHelpBlock"
-          v-model="matchup.brojRundi"
-        />
-        <button
-          type="button"
-          class="btn btn-primary my-3"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Izaberi igrače
-        </button>
+      <div
+        v-if="
+          igraci.statusTurnir !== 'active' && igraci.statusTurnir !== 'finished'
+        "
+      >
+        <div>
+          <div class="row">
+            <div class="col">
+              <input
+                type="text"
+                id="imeturnira"
+                class="form-control"
+                placeholder="Ime turnira"
+                v-model="igraci.imeTurnira"
+              />
+            </div>
+            <div class="col-3">
+              <input
+                type="number"
+                id="brojRundi"
+                class="form-control"
+                placeholder="Br rundi"
+                v-model.number="igraci.brojRundi"
+              />
+            </div>
+          </div>
 
+          <button
+            type="button"
+            class="btn btn-primary my-3"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            Izaberi igrače
+          </button>
+        </div>
         <ol class="list-group list-group-numbered">
           <odabraniIgraci
             v-for="igrac in Odabrani"
@@ -38,7 +56,7 @@
           Započni turnir
         </button>
       </div>
-      <matchupComp v-if="igraci.zapoceoTurnir === true" />
+      <matchupComp v-if="igraci.statusTurnir === 'active'" />
     </div>
     <div class="col"></div>
     <!-- Modal -->
@@ -83,7 +101,8 @@ import odabraniIgraci from "@/components/odabraniigraci.vue";
 import { onSnapshot, collection } from "firebase/firestore";
 import { db } from "@/firebase.js";
 import igraci from "@/igraci";
-import matchup from "@/matchupi";
+
+import { organizator } from "@/organizator";
 import matchupComp from "@/components/matchup.vue";
 
 /*let playeri = [
@@ -94,12 +113,9 @@ import matchupComp from "@/components/matchup.vue";
 export default {
   data() {
     return {
-      options: ["2-0", "2-1", "1-1", "1-2", "0-2"],
-      value: "2-0",
       playeri: [],
       igraci,
       Odabrani: [],
-      matchup,
     };
   },
 
@@ -109,58 +125,49 @@ export default {
     matchupComp,
   },
   methods: {
-    compare(a, b) {
-      if (a.player1 < b.player1) {
-        return -1;
-      }
-      if (a.player1 > b.player1) {
-        return 1;
-      }
-      return 0;
+    proba() {
+      igraci.turnir = organizator.newTournament({
+        format: "swiss",
+        bestOf: 3,
+        rounds: this.igraci.brojRundi,
+        pointsForDraw: 1,
+        pointsForWin: 3,
+        sorting: "descending",
+        tiebreakers: [
+          "opponent match win percentage",
+          "game win percentage",
+          "opponent game win percentage",
+        ],
+      });
+      console.log(igraci.turnir);
     },
     spariIgrace() {
-      let runda = [];
-      for (var i = 0; i < igraci.listaIgraca.length; i += 2) {
-        runda.push({
-          id: i,
-          player1: igraci.listaIgraca[i].id,
-          player2: igraci.listaIgraca[i + 1].id,
-          rez: undefined,
-        });
-      }
-      matchup.listaMatchupa.push(runda);
+      console.log("tuje");
     },
     turnirStart() {
-      if (matchup.brojRundi === null) {
+      if (igraci.brojRundi === null) {
         alert("Prvo izaberi broj rundi pa možeš pokrenuti turnir");
       } else {
-        if (igraci.listaIgraca.length % 2 !== 0) {
-          igraci.listaIgraca.push({
-            id: 0,
-            username: "bye",
-            DCI: "",
-            omw: 0,
-            odigrano: [],
-            gwp: 0,
-            ogw: 0,
-            points: 0,
-          });
-        }
-
-        this.spariIgrace();
-        matchup.listaMatchupa[0].forEach((el) => {
-          console.log("matchup:", el.player1, " ", el.player2);
+        igraci.turnir = organizator.newTournament({
+          format: "swiss",
+          bestOf: 3,
+          name: igraci.imeTurnira,
+          rounds: this.igraci.brojRundi,
+          pointsForDraw: 1,
+          pointsForWin: 3,
+          sorting: "descending",
+          tiebreakers: [
+            "opponent match win percentage",
+            "game win percentage",
+            "opponent game win percentage",
+          ],
         });
-        console.log("broj rundi:", matchup.brojRundi);
-        this.spariIgrace();
-        this.igraci.zapoceoTurnir = true;
-        matchup.listaMatchupa[1].sort(this.compare);
-        console.log(
-          "sada si u rundi:",
-          matchup.tekucaRunda,
-          "   ",
-          matchup.listaMatchupa[1][0].player1
-        );
+        igraci.listaIgraca.forEach((el) => {
+          igraci.turnir.addPlayer({ alias: el.username, id: el.id });
+        });
+        igraci.turnir.startEvent();
+        igraci.statusTurnir = igraci.turnir.status;
+        console.log(igraci.turnir);
       }
     },
 
@@ -173,13 +180,6 @@ export default {
           this.playeri.push({
             ...doc.data(),
             id: doc.id,
-            odigrano: [],
-            wins: 0,
-            loses: 0,
-            omw: 0,
-            gwp: 0,
-            ogw: 0,
-            points: 0,
           });
         });
       });
@@ -196,3 +196,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.row {
+  margin: auto;
+}
+</style>

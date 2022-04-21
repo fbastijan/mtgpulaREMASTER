@@ -1,29 +1,15 @@
 <template>
-  <div class="row">
-    <div class="col">Column</div>
-    <div class="col-3">
-      <apex-chart
-        width="380"
-        type="radialBar"
-        :options="options"
-        :series="series"
-      ></apex-chart>
-    </div>
-    <div class="col-3">
-      <apex-chart
-        width="380"
-        type="radialBar"
-        :options="options"
-        :series="series"
-      ></apex-chart>
-    </div>
-
-    <div class="col">Column</div>
-  </div>
+  <apex-chart
+    width="380"
+    type="radialBar"
+    :options="options"
+    :series="series"
+  ></apex-chart>
 </template>
 
 <script>
 export default {
+  methods: {},
   data: function () {
     const s = 45;
     return {

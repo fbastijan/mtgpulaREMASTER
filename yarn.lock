@@ -3185,6 +3185,11 @@
   "resolved" "https://registry.npmmirror.com/easy-stack/-/easy-stack-1.0.1.tgz"
   "version" "1.0.1"
 
+"edmonds-blossom@^1.0.0":
+  "integrity" "sha1-6TcnO9PL4ScQtmhG4eW1CGvfH5c="
+  "resolved" "https://registry.npmjs.org/edmonds-blossom/-/edmonds-blossom-1.0.0.tgz"
+  "version" "1.0.0"
+
 "ee-first@1.1.1":
   "integrity" "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="
   "resolved" "https://registry.npmmirror.com/ee-first/-/ee-first-1.1.1.tgz"
@@ -4361,6 +4366,11 @@
     "readable-stream" "~2.3.6"
     "set-immediate-shim" "~1.0.1"
 
+"just-shuffle@^4.0.1":
+  "integrity" "sha512-zi6tkAMmnrMc39Tmxma7uEJ4c/NmzreJYHNqpZZ5CR8DluhfarzSmAZ/Tr3HjCYJrXajX6L+rEmC2Z/Fq3uuyg=="
+  "resolved" "https://registry.npmjs.org/just-shuffle/-/just-shuffle-4.0.1.tgz"
+  "version" "4.0.1"
+
 "kind-of@^6.0.2":
   "integrity" "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="
   "resolved" "https://registry.npmmirror.com/kind-of/-/kind-of-6.0.3.tgz"
@@ -5460,6 +5470,11 @@
   dependencies:
     "safe-buffer" "^5.1.0"
 
+"randomized-string@^1.2.6":
+  "integrity" "sha512-ar8NzlrJTB1LkWN1v7E/KTwUbMeJ9Uk7wHoZwOzK5oHyD+ub85rEbEiZ976rttsNfxNn85t11wviCtVRtewfbg=="
+  "resolved" "https://registry.npmjs.org/randomized-string/-/randomized-string-1.2.6.tgz"
+  "version" "1.2.6"
+
 "range-parser@^1.2.1", "range-parser@~1.2.1":
   "integrity" "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg=="
   "resolved" "https://registry.npmmirror.com/range-parser/-/range-parser-1.2.1.tgz"
@@ -6330,6 +6345,15 @@
   "integrity" "sha512-gduQwd1rOdDMGxFG1gEvhV88Oirdo2p+KjoYFU7k2g+i7n6AFFbDQ5kMPUsW0pNbfQsB/cwXvT1i4Bue0s9g5g=="
   "resolved" "https://registry.npmmirror.com/totalist/-/totalist-1.1.0.tgz"
   "version" "1.1.0"
+
+"tournament-organizer@^2.2.1":
+  "integrity" "sha512-Z0SKw9/qqlsP9hsSq6RoM9hia2uJHo1njhwMsErbPUzCF5fHIMB72YQ5Tc2Wee9RUVqKoJbVGm78tcf4xzrj/g=="
+  "resolved" "https://registry.npmjs.org/tournament-organizer/-/tournament-organizer-2.2.1.tgz"
+  "version" "2.2.1"
+  dependencies:
+    "edmonds-blossom" "^1.0.0"
+    "just-shuffle" "^4.0.1"
+    "randomized-string" "^1.2.6"
 
 "tr46@~0.0.3":
   "integrity" "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="

@@ -21,6 +21,9 @@ export default {
           igraci.listaIgraca.splice(i, 1);
           i--;
         }
+        if (igraci.turnir) {
+          igraci.turnir.removePlayer(this.info.id);
+        }
       }
     },
   },

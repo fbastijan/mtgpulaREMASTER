@@ -1,13 +1,13 @@
 <template>
-  <li class="list-group-item">
+  <li class="list-group-item" v-if="info.round === igraci.turnir.currentRound">
     <div class="row align-items-center">
       <div class="col">
-        <label class="">{{ getPlayer1 }}</label>
+        {{ getPlayer1 }}
       </div>
-      <div class="col-6">
+      <div class="col-md">
         <div class="dropdown">
           <button
-            class="btn btn-secondary dropdown-toggle"
+            class="btn btn-primary dropdown-toggle"
             type="button"
             id="dropdownMenuButton1"
             data-bs-toggle="dropdown"
@@ -35,51 +35,69 @@
         </div>
       </div>
       <div class="col">
-        <label>{{ getPlayer2 }}</label>
+        {{ getPlayer2 }}
       </div>
     </div>
   </li>
 </template>
 <script>
 import igraci from "@/igraci";
-import matchup from "@/matchupi";
+
 export default {
   name: "matchupRunda",
   props: ["info"],
 
   data() {
     return {
-      options: ["2-0", "2-1", "1-1", "1-2", "0-2"],
-      rezultat: "2-0",
+      options: ["2-0", "2-1", "1-1", "1-2", "0-2", "1-0", "0-1"],
+      rezultat: " --- ",
       igraci,
-      matchup,
     };
   },
   methods: {
     setRezultat() {
-      let matchupIndex = matchup.listaMatchupa[
-        matchup.tekucaRunda - 1
-      ].findIndex((obj) => obj.id == this.info.id);
-      matchup.listaMatchupa[matchup.tekucaRunda - 1][matchupIndex].rez =
-        this.rezultat;
+      switch (this.rezultat) {
+        case "2-0":
+          igraci.turnir.enterResult(this.info.id, [2, 0]);
+
+          break;
+        case "1-0":
+          igraci.turnir.enterResult(this.info.id, [1, 0]);
+
+          break;
+        case "0-1":
+          igraci.turnir.enterResult(this.info.id, [0, 1]);
+
+          break;
+        case "2-1":
+          igraci.turnir.enterResult(this.info.id, [2, 1]);
+          break;
+        case "1-1":
+          igraci.turnir.enterResult(this.info.id, [0, 0, 1]);
+          break;
+        case "1-2":
+          igraci.turnir.enterResult(this.info.id, [1, 2]);
+          break;
+        case "0-2":
+          igraci.turnir.enterResult(this.info.id, [0, 2]);
+          break;
+      }
     },
   },
   computed: {
     getPlayer1() {
       let playerIndex = igraci.listaIgraca.findIndex(
-        (obj) => obj.id == this.info.player1
+        (obj) => obj.id == this.info.playerOne
       );
       return igraci.listaIgraca[playerIndex].username;
     },
     getPlayer2() {
       let playerIndex = igraci.listaIgraca.findIndex(
-        (obj) => obj.id == this.info.player2
+        (obj) => obj.id == this.info.playerTwo
       );
       return igraci.listaIgraca[playerIndex].username;
     },
   },
-  mounted() {
-    this.setRezultat();
-  },
+  mounted() {},
 };
 </script>

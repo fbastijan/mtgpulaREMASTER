@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h2>Runda: {{ matchup.tekucaRunda }}</h2>
+    <h2>Runda: {{ igraci.turnir.currentRound }}</h2>
     <ul class="list-group">
       <rundaMatchup
-        v-for="matchup in matchup.listaMatchupa[matchup.tekucaRunda - 1]"
-        :key="matchup.id"
-        :info="matchup"
+        v-for="matchups in igraci.turnir.matches"
+        :key="matchups.id"
+        :info="matchups"
       />
     </ul>
     <button type="button" class="btn mt-2 btn-primary" @click="sljRunda()">
@@ -15,7 +15,7 @@
 </template>
 <script>
 import igraci from "@/igraci";
-import matchup from "@/matchupi";
+
 import rundaMatchup from "@/components/rundaMatchup.vue";
 
 export default {
@@ -26,15 +26,28 @@ export default {
   },
   data() {
     return {
-      options: ["2-0", "2-1", "1-1", "1-2", "0-2"],
-      value: "2-0",
       igraci,
-      matchup,
     };
   },
   methods: {
     sljRunda() {
-      matchup.tekucaRunda += 1;
+      if (igraci.turnir.currentRound === igraci.turnir.rounds) {
+        igraci.statusTurnir = "finished";
+      }
+      igraci.turnir.nextRound();
+
+      let poredak = [];
+      console.log(igraci.turnir.standings(false));
+      poredak.push(...igraci.turnir.standings(false));
+      poredak.forEach((element) => {
+        console.log(
+          element.alias,
+          " broj bodova:",
+          element.matchPoints,
+          " tiebreakeri ",
+          element.tiebreakers
+        );
+      });
     },
   },
 };
