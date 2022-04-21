@@ -106,7 +106,6 @@ export default {
           .catch(function (e) {
             console.error("Greška", e);
           });
-  
       }
     },
   },

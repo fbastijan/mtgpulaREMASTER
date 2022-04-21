@@ -1,7 +1,10 @@
 export default {
   listaIgraca: [],
   statusTurnir: "",
-  turnir: undefined,
+  turnir: {
+    status: undefined,
+  },
   brojRundi: null,
-  imeTurnira: "Novi turnir",
+  imeTurnira: "",
+  standingsIgraci: [],
 };

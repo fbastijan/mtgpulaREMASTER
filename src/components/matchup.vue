@@ -39,6 +39,7 @@ export default {
       let poredak = [];
       console.log(igraci.turnir.standings(false));
       poredak.push(...igraci.turnir.standings(false));
+
       poredak.forEach((element) => {
         console.log(
           element.alias,

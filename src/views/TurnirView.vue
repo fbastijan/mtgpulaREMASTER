@@ -2,12 +2,22 @@
   <div class="row">
     <div class="col"></div>
     <div class="col-6">
-      <h1>Generator turnira</h1>
-      <div
+      <h1
         v-if="
-          igraci.statusTurnir !== 'active' && igraci.statusTurnir !== 'finished'
+          igraci.turnir.status === 'active' ||
+          igraci.turnir.status === 'finished'
         "
       >
+        {{ igraci.turnir.name }} turnir
+      </h1>
+
+      <div
+        v-if="
+          igraci.turnir.status !== 'active' &&
+          igraci.turnir.status !== 'finished'
+        "
+      >
+        <h1>Generator turnira</h1>
         <div>
           <div class="row">
             <div class="col">
@@ -56,8 +66,67 @@
           Započni turnir
         </button>
       </div>
-      <matchupComp v-if="igraci.statusTurnir === 'active'" />
+      <table
+        class="table"
+        v-if="
+          igraci.turnir.status === 'active' ||
+          igraci.turnir.status === 'finished'
+        "
+      >
+        <thead class="bg-dark bg-gradient text-white">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Ime igrača</th>
+            <th scope="col">Bodovi</th>
+            <th scope="col">OMP</th>
+            <th scope="col">GWP</th>
+            <th scope="col">OGP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(poredan, index) in igraci.standingsIgraci"
+            :key="poredan.id"
+            :info="poredan"
+          >
+            <th scope="row">{{ index + 1 }}</th>
+            <td>{{ poredan.alias }}</td>
+            <td>{{ poredan.matchPoints }}</td>
+            <td>
+              {{
+                Number.parseFloat(
+                  poredan.tiebreakers.oppMatchWinPct * 100
+                ).toFixed(2)
+              }}%
+            </td>
+            <td>
+              {{
+                Number.parseFloat(poredan.tiebreakers.gameWinPct * 100).toFixed(
+                  2
+                )
+              }}%
+            </td>
+            <td>
+              {{
+                Number.parseFloat(
+                  poredan.tiebreakers.oppGameWinPct * 100
+                ).toFixed(2)
+              }}%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <matchupComp v-if="igraci.turnir.status === 'active'" />
+      <button
+        type="button"
+        class="btn mt-2 btn-primary"
+        v-if="igraci.turnir.status === 'finished'"
+      >
+        Završi turnir
+      </button>
     </div>
+
     <div class="col"></div>
     <!-- Modal -->
     <div
@@ -129,10 +198,11 @@ export default {
       igraci.turnir = organizator.newTournament({
         format: "swiss",
         bestOf: 3,
-        rounds: this.igraci.brojRundi,
+        rounds: this.brRundi,
         pointsForDraw: 1,
         pointsForWin: 3,
         sorting: "descending",
+        name: this.ime,
         tiebreakers: [
           "opponent match win percentage",
           "game win percentage",
@@ -152,7 +222,7 @@ export default {
           format: "swiss",
           bestOf: 3,
           name: igraci.imeTurnira,
-          rounds: this.igraci.brojRundi,
+          rounds: igraci.brojRundi,
           pointsForDraw: 1,
           pointsForWin: 3,
           sorting: "descending",
@@ -166,7 +236,7 @@ export default {
           igraci.turnir.addPlayer({ alias: el.username, id: el.id });
         });
         igraci.turnir.startEvent();
-        igraci.statusTurnir = igraci.turnir.status;
+        igraci.standingsIgraci = igraci.turnir.standings();
         console.log(igraci.turnir);
       }
     },

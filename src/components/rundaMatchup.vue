@@ -7,6 +7,7 @@
       <div class="col-md">
         <div class="dropdown">
           <button
+            :disabled="!info.playerTwo"
             class="btn btn-primary dropdown-toggle"
             type="button"
             id="dropdownMenuButton1"
@@ -52,6 +53,7 @@ export default {
       options: ["2-0", "2-1", "1-1", "1-2", "0-2", "1-0", "0-1"],
       rezultat: " --- ",
       igraci,
+      byeCheck: false,
     };
   },
   methods: {
@@ -59,27 +61,31 @@ export default {
       switch (this.rezultat) {
         case "2-0":
           igraci.turnir.enterResult(this.info.id, [2, 0]);
-
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
         case "1-0":
           igraci.turnir.enterResult(this.info.id, [1, 0]);
-
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
         case "0-1":
           igraci.turnir.enterResult(this.info.id, [0, 1]);
-
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
         case "2-1":
           igraci.turnir.enterResult(this.info.id, [2, 1]);
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
         case "1-1":
           igraci.turnir.enterResult(this.info.id, [0, 0, 1]);
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
         case "1-2":
           igraci.turnir.enterResult(this.info.id, [1, 2]);
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
         case "0-2":
           igraci.turnir.enterResult(this.info.id, [0, 2]);
+
           break;
       }
     },
@@ -92,12 +98,18 @@ export default {
       return igraci.listaIgraca[playerIndex].username;
     },
     getPlayer2() {
-      let playerIndex = igraci.listaIgraca.findIndex(
-        (obj) => obj.id == this.info.playerTwo
-      );
-      return igraci.listaIgraca[playerIndex].username;
+      if (!this.info.playerTwo) {
+        return "bye";
+      } else {
+        let playerIndex = igraci.listaIgraca.findIndex(
+          (obj) => obj.id == this.info.playerTwo
+        );
+        return igraci.listaIgraca[playerIndex].username;
+      }
     },
   },
-  mounted() {},
+  mounted() {
+    igraci.standingsIgraci = igraci.turnir.standings();
+  },
 };
 </script>
