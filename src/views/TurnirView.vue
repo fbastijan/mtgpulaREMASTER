@@ -122,6 +122,7 @@
         type="button"
         class="btn mt-2 btn-primary"
         v-if="igraci.turnir.status === 'finished'"
+        @click="turnirEnd()"
       >
         Završi turnir
       </button>
@@ -167,7 +168,14 @@
 <script>
 import Playeriturnir from "@/components/playeriturnir.vue";
 import odabraniIgraci from "@/components/odabraniigraci.vue";
-import { onSnapshot, collection } from "firebase/firestore";
+import {
+  onSnapshot,
+  collection,
+  setDoc,
+  doc,
+  updateDoc,
+  increment,
+} from "firebase/firestore";
 import { db } from "@/firebase.js";
 import igraci from "@/igraci";
 
@@ -194,26 +202,6 @@ export default {
     matchupComp,
   },
   methods: {
-    proba() {
-      igraci.turnir = organizator.newTournament({
-        format: "swiss",
-        bestOf: 3,
-        rounds: this.brRundi,
-        pointsForDraw: 1,
-        pointsForWin: 3,
-        sorting: "descending",
-        name: this.ime,
-        tiebreakers: [
-          "opponent match win percentage",
-          "game win percentage",
-          "opponent game win percentage",
-        ],
-      });
-      console.log(igraci.turnir);
-    },
-    spariIgrace() {
-      console.log("tuje");
-    },
     turnirStart() {
       if (igraci.brojRundi === null) {
         alert("Prvo izaberi broj rundi pa možeš pokrenuti turnir");
@@ -237,10 +225,55 @@ export default {
         });
         igraci.turnir.startEvent();
         igraci.standingsIgraci = igraci.turnir.standings();
-        console.log(igraci.turnir);
       }
     },
-
+    turnirEnd() {
+      let processed = {};
+      let raw = igraci.turnir.standings();
+      raw.forEach((el) => {
+        processed[el.id] = {
+          alias: el.alias,
+          matchPoints: el.matchPoints,
+          tiebreakers: el.tiebreakers,
+        };
+      });
+      setDoc(
+        doc(collection(db, "turniri"), igraci.turnir.name),
+        processed
+      ).then(() => {
+        this.updateBodovi(raw);
+        this.updateWin(raw);
+        this.updateTop3(raw);
+        this.$router.push({ path: "/" });
+        this.inicijalizirajTurnir();
+      });
+    },
+    inicijalizirajTurnir() {
+      igraci.turnir = [];
+      igraci.statusTurnir = "";
+      igraci.listaIgraca = [];
+      igraci.imeTurnira = "";
+      igraci.brojRundi = null;
+    },
+    updateWin(polje) {
+      updateDoc(doc(collection(db, "users"), polje[0].id), {
+        ukPobjede: increment(1),
+      });
+    },
+    updateTop3(polje) {
+      for (let i = 0; i < 2; i++) {
+        updateDoc(doc(collection(db, "users"), polje[i].id), {
+          ukTop3: increment(1),
+        });
+      }
+    },
+    updateBodovi(polje) {
+      polje.forEach((el) => {
+        updateDoc(doc(collection(db, "users"), el.id), {
+          ukBodovi: increment(el.matchPoints),
+        });
+      });
+    },
     getPlayers() {
       console.log("firebase dohvat...");
       const docRef = collection(db, "users");
