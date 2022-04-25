@@ -7,4 +7,5 @@ export default {
   brojRundi: null,
   imeTurnira: "",
   standingsIgraci: [],
+  leaders: [],
 };

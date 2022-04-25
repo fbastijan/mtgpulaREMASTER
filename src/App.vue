@@ -61,12 +61,14 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("*** User", store.currentUser);
     store.currentUser = user.email;
+    store.currentUid = user.uid;
     if (!currentRoute.meta.needsUser) {
       router.push({ name: "home" });
     }
   } else {
     console.log("*** User", store.currentUser);
     store.currentUser = null;
+    store.currentUid = null;
     if (currentRoute.meta.needsUser) {
       router.push({ name: "login" });
     }

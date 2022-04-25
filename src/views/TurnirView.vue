@@ -228,25 +228,29 @@ export default {
       }
     },
     turnirEnd() {
-      let processed = {};
+      let standings = {};
       let raw = igraci.turnir.standings();
       raw.forEach((el) => {
-        processed[el.id] = {
+        standings[el.id] = {
           alias: el.alias,
           matchPoints: el.matchPoints,
           tiebreakers: el.tiebreakers,
         };
       });
+      console.log(igraci.turnir.startTime.toString());
       setDoc(
-        doc(collection(db, "turniri"), igraci.turnir.name),
-        processed
+        doc(collection(db, "turniri"), igraci.turnir.startTime.toString()),
+        {
+          name: igraci.turnir.name,
+          standings,
+        }
       ).then(() => {
         this.updateBodovi(raw);
         this.updateWin(raw);
         this.updateTop3(raw);
-        this.$router.push({ path: "/" });
         this.inicijalizirajTurnir();
       });
+      this.$router.push({ path: "/" });
     },
     inicijalizirajTurnir() {
       igraci.turnir = [];
@@ -261,7 +265,7 @@ export default {
       });
     },
     updateTop3(polje) {
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i <= 2; i++) {
         updateDoc(doc(collection(db, "users"), polje[i].id), {
           ukTop3: increment(1),
         });
@@ -271,6 +275,7 @@ export default {
       polje.forEach((el) => {
         updateDoc(doc(collection(db, "users"), el.id), {
           ukBodovi: increment(el.matchPoints),
+          moguciBodovi: increment(igraci.brojRundi * 3),
         });
       });
     },

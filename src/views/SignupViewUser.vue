@@ -90,7 +90,11 @@ export default {
   },
   methods: {
     async signup() {
-      if (this.password != this.repeatPassword) {
+      if (this.username === "" || this.DCI === "") {
+        alert("Ispunite sva prazna polja");
+      } else if (this.password.length < 6) {
+        alert("Lozinka mora sadržavati barem 6 znakova");
+      } else if (this.password != this.repeatPassword) {
         alert("Lozinke se ne podudaraju!");
       } else {
         const auth = getAuth();
@@ -101,10 +105,15 @@ export default {
             return setDoc(doc(collection(db, "users"), cred.user.uid), {
               username: this.username,
               DCI: this.DCI,
+              ukPobjede: 0,
+              ukTop3: 0,
+              ukBodovi: 0,
+              moguciBodovi: 0,
             });
           })
           .catch(function (e) {
             console.error("Greška", e);
+            alert("Pogrešan email ili prekratak password");
           });
       }
     },

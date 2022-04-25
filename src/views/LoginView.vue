@@ -56,6 +56,7 @@ export default {
         })
         .catch((e) => {
           console.error("greška", e);
+          alert("Pogrešan Password ili e-mail!");
         });
     },
   },

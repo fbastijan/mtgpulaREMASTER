@@ -85,7 +85,7 @@ export default {
           break;
         case "0-2":
           igraci.turnir.enterResult(this.info.id, [0, 2]);
-
+          igraci.standingsIgraci = igraci.turnir.standings();
           break;
       }
     },
