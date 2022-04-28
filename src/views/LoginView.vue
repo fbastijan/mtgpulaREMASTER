@@ -63,7 +63,7 @@ export default {
 };
 </script>
 <style>
-.btn {
+.btn-primary {
   background-color: #ffa500 !important;
   border-color: white !important;
 }
