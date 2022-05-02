@@ -83,35 +83,117 @@
               :key="index"
               :info="poredan"
             >
-              <li class="list-group-item d-flex">
-                <label>{{ poredan.name }}</label>
-                <button
-                  type="button"
-                  class="btn btn-link btn-sm ms-auto"
-                  data-toggle="modal"
-                  data-target="#exampleModalLong"
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col">
+                    <h5>{{ poredan.name }}</h5>
+                  </div>
+                  <div class="col-6">
+                    <label class="mx-auto">{{
+                      preracunajDatum(Date.parse(poredan.date))
+                    }}</label>
+                  </div>
+                  <div class="col">
+                    <button
+                      type="button"
+                      class="btn btn-link btn-sm ms-auto"
+                      data-bs-toggle="modal"
+                      :data-bs-target="'#myModal' + index"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        height="24"
+                      >
+                        <path
+                          d="M15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z"
+                        ></path>
+                        <path
+                          fill-rule="evenodd"
+                          d="M12 3.5c-3.432 0-6.125 1.534-8.054 3.24C2.02 8.445.814 10.352.33 11.202a1.6 1.6 0 000 1.598c.484.85 1.69 2.758 3.616 4.46C5.876 18.966 8.568 20.5 12 20.5c3.432 0 6.125-1.534 8.054-3.24 1.926-1.704 3.132-3.611 3.616-4.461a1.6 1.6 0 000-1.598c-.484-.85-1.69-2.757-3.616-4.46C18.124 5.034 15.432 3.5 12 3.5zM1.633 11.945c.441-.774 1.551-2.528 3.307-4.08C6.69 6.314 9.045 5 12 5c2.955 0 5.309 1.315 7.06 2.864 1.756 1.553 2.866 3.307 3.307 4.08a.111.111 0 01.017.056.111.111 0 01-.017.056c-.441.774-1.551 2.527-3.307 4.08C17.31 17.685 14.955 19 12 19c-2.955 0-5.309-1.315-7.06-2.864-1.756-1.553-2.866-3.306-3.307-4.08A.11.11 0 011.616 12a.11.11 0 01.017-.055z"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="modal fade"
+                  :id="'myModal' + index"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    height="24"
-                  >
-                    <path d="M15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z"></path>
-                    <path
-                      fill-rule="evenodd"
-                      d="M12 3.5c-3.432 0-6.125 1.534-8.054 3.24C2.02 8.445.814 10.352.33 11.202a1.6 1.6 0 000 1.598c.484.85 1.69 2.758 3.616 4.46C5.876 18.966 8.568 20.5 12 20.5c3.432 0 6.125-1.534 8.054-3.24 1.926-1.704 3.132-3.611 3.616-4.461a1.6 1.6 0 000-1.598c-.484-.85-1.69-2.757-3.616-4.46C18.124 5.034 15.432 3.5 12 3.5zM1.633 11.945c.441-.774 1.551-2.528 3.307-4.08C6.69 6.314 9.045 5 12 5c2.955 0 5.309 1.315 7.06 2.864 1.756 1.553 2.866 3.307 3.307 4.08a.111.111 0 01.017.056.111.111 0 01-.017.056c-.441.774-1.551 2.527-3.307 4.08C17.31 17.685 14.955 19 12 19c-2.955 0-5.309-1.315-7.06-2.864-1.756-1.553-2.866-3.306-3.307-4.08A.11.11 0 011.616 12a.11.11 0 01.017-.055z"
-                    ></path>
-                  </svg>
-                </button>
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                          {{ poredan.name }}
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                          <table class="table">
+                            <thead class="bg-dark bg-gradient text-white">
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Ime igrača</th>
+                                <th scope="col">Bodovi</th>
+                                <th scope="col">OMP</th>
+                                <th scope="col">GWP</th>
+                                <th scope="col">OGP</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                v-for="(igraci, a) in poredan.standings"
+                                :key="a"
+                              >
+                                <th scope="row">{{ a + 1 }}</th>
+                                <td>{{ igraci.alias }}</td>
+                                <td>{{ igraci.matchPoints }}</td>
+                                <td>
+                                  {{
+                                    Number.parseFloat(
+                                      igraci.tiebreakers.oppMatchWinPct * 100
+                                    ).toFixed(2)
+                                  }}%
+                                </td>
+                                <td>
+                                  {{
+                                    Number.parseFloat(
+                                      igraci.tiebreakers.gameWinPct * 100
+                                    ).toFixed(2)
+                                  }}%
+                                </td>
+                                <td>
+                                  {{
+                                    Number.parseFloat(
+                                      igraci.tiebreakers.oppGameWinPct * 100
+                                    ).toFixed(2)
+                                  }}%
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer"></div>
+                  </div>
+                </div>
               </li>
             </ul>
           </div>
         </div>
-        <button @click="getTurniri()">aaaaaa</button>
       </div>
     </div>
-    <!-- modal -->
   </div>
 </template>
 
@@ -127,8 +209,12 @@ import {
 import { db } from "@/firebase.js";
 import store from "@/store";
 import igraci from "@/igraci";
+import moment from "moment";
 export default {
   methods: {
+    preracunajDatum(datum) {
+      return moment(datum).fromNow();
+    },
     getLeaderboard() {
       console.log("firebase dohvat...");
       const docRef = collection(db, "users");
@@ -152,7 +238,7 @@ export default {
     },
     getTurniri() {
       const docRef = collection(db, "turniri");
-      const q = query(docRef, limit(15));
+      const q = query(docRef, limit(15), orderBy("date", "desc"));
       onSnapshot(q, (snapshot) => {
         this.turniri = [];
         snapshot.docs.forEach((doc) => {
@@ -160,8 +246,6 @@ export default {
             ...doc.data(),
             id: doc.id,
           });
-
-          console.log(this.turniri);
         });
       });
     },
@@ -170,6 +254,7 @@ export default {
       const docRef = doc(db, "users", store.currentUid);
       onSnapshot(docRef, (doc) => {
         this.currentUsername = doc.data().username;
+        this.store.prava = doc.data().prava;
         this.currentPobjede = doc.data().ukPobjede;
         this.currentBodovi = doc.data().ukBodovi;
         this.currentTop3 = doc.data().ukTop3;
@@ -184,9 +269,11 @@ export default {
   mounted() {
     this.getDataFromCurrent();
     this.getLeaderboard();
+    this.getTurniri();
   },
   data() {
     return {
+      prava: false,
       series: [0],
       igraci,
       store,

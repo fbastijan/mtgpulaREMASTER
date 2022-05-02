@@ -31,7 +31,10 @@
               >
             </li>
 
-            <li class="nav-item" v-if="store.currentUser">
+            <li
+              class="nav-item"
+              v-if="store.currentUser && store.prava === true"
+            >
               <router-link to="/turnir" class="nav-link text-white"
                 >Turnir</router-link
               >

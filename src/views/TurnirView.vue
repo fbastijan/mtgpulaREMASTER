@@ -150,6 +150,15 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
+              <input
+                type="text"
+                id="pretraga"
+                class="form-control"
+                placeholder="Ime playera"
+                v-model="pretraga"
+                @input="getPlayers()"
+              />
+
               <ul class="list-group">
                 <Playeriturnir
                   v-for="player in playeri"
@@ -175,6 +184,8 @@ import {
   doc,
   updateDoc,
   increment,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "@/firebase.js";
 import igraci from "@/igraci";
@@ -193,6 +204,7 @@ export default {
       playeri: [],
       igraci,
       Odabrani: [],
+      pretraga: "",
     };
   },
 
@@ -228,23 +240,22 @@ export default {
       }
     },
     turnirEnd() {
-      let standings = {};
+      let standings = [];
       let raw = igraci.turnir.standings();
       raw.forEach((el) => {
-        standings[el.id] = {
+        standings.push({
+          id: el.id,
           alias: el.alias,
           matchPoints: el.matchPoints,
           tiebreakers: el.tiebreakers,
-        };
+        });
       });
       console.log(igraci.turnir.startTime.toString());
-      setDoc(
-        doc(collection(db, "turniri"), igraci.turnir.startTime.toString()),
-        {
-          name: igraci.turnir.name,
-          standings,
-        }
-      ).then(() => {
+      setDoc(doc(collection(db, "turniri")), {
+        date: igraci.turnir.startTime.toString(),
+        name: igraci.turnir.name,
+        standings,
+      }).then(() => {
         this.updateBodovi(raw);
         this.updateWin(raw);
         this.updateTop3(raw);
@@ -280,17 +291,25 @@ export default {
       });
     },
     getPlayers() {
-      console.log("firebase dohvat...");
-      const docRef = collection(db, "users");
-      onSnapshot(docRef, (snapshot) => {
-        this.playeri = [];
-        snapshot.docs.forEach((doc) => {
-          this.playeri.push({
-            ...doc.data(),
-            id: doc.id,
+      if (this.pretraga !== "") {
+        if (this.pretraga === "all") this.pretraga = "";
+        console.log("firebase dohvat...");
+        const docRef = collection(db, "users");
+        const q = query(
+          docRef,
+          where("username", ">=", this.pretraga),
+          where("username", "<=", this.pretraga + "\uf8ff")
+        );
+        onSnapshot(q, (snapshot) => {
+          this.playeri = [];
+          snapshot.docs.forEach((doc) => {
+            this.playeri.push({
+              ...doc.data(),
+              id: doc.id,
+            });
           });
         });
-      });
+      }
     },
   },
   mounted() {
